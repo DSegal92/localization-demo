@@ -8,7 +8,7 @@ import 'codemirror/mode/haml/haml'
 const Container = styled.div`
   position: relative;
   width: 50vw;
-  height: 300px;
+  height: 332px;
   background-color: #232323;
 `
 

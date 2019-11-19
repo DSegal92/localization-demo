@@ -3,13 +3,23 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   background-color: white;
-  width: 50vw;
-  height: 600px;
+  width: 360px;
+  height: 750px;
   margin-top: 80px;
-  border-radius: 10px;
-  border-top: 40px solid rgb(231, 234, 237);
+  border-radius: 30px;
+  border: 20px solid #171717;
   position: relative;
   padding: 15px;
+`
+
+const Notch = styled.div`
+  position: absolute;
+  width: 280px;
+  height: 40px;
+  border-radius: 20px;
+  left: 55px;
+  top: -20px;
+  background-color: black;
 `
 
 const ControlButton = styled.div`
@@ -20,27 +30,9 @@ const ControlButton = styled.div`
   top: -25px;
 `
 
-const Close = styled(ControlButton)`
-  background-color: rgb(239, 109, 93);
-  left: 15px;
-`
-
-const Minimize = styled(ControlButton)`
-  background-color: rgb(245, 194, 80);
-  left: 40px;
-`
-
-const Expand = styled(ControlButton)`
-  background-color: rgb(99, 201, 86);
-  left: 65px;
-`
-
-export default ({ localizedString }) => (
+export default ({ localizations, language }) => (
   <Container>
-    <Close />
-    <Minimize />
-    <Expand />
-
-    <h1>{ localizedString }</h1>
+    <Notch />
+    <h1>{ localizations[language]['string_1'] }</h1>
   </Container>
 )
