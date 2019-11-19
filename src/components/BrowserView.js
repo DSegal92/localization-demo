@@ -30,9 +30,9 @@ const ControlButton = styled.div`
   top: -25px;
 `
 
-export default ({ localizations, language }) => (
+export default ({ localizations, language, localizationString }) => (
   <Container>
     <Notch />
-    <h1>{ localizations[language]['string_1'] }</h1>
+    <h1>{ localizations[language][localizationString] }</h1>
   </Container>
 )

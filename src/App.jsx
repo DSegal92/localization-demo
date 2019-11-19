@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useReducer } from 'react';
 import ServerLocalizationTextField from './components/ServerLocalizationTextField'
 import ServerLocalizations from './components/ServerLocalizations'
 import styled from 'styled-components'
 import 'codemirror/lib/codemirror.css'
-import yaml from 'js-yaml'
-import _ from 'lodash'
 import BrowserView from './components/BrowserView'
+import { xmlToKeyValue } from './utilities'
 
 const Container = styled.div`
   background-color: #002b36;
@@ -32,90 +29,50 @@ const Preview = styled.div`
   align-items: center;
 `
 
-const test = `
-  views:
-    test_strings:
-      hello: hello, world!
-`
-
-const tarp = `
-  views:
-    test_strings:
-      hello: ¡hola, mundo!
-`
-
-const xml_test = `
+const language_1 = `
   <resources>
       <string name="string_1">hello, world!</string>
       <string name="string_2">goodnight, moon!</string>
   </resources>
 `
 
-
-/*
- * { language_1: { string_1: "Test" }, language_2: { string_1: "Test In Spanish" } }
- */
+const language_2 = `
+  <resources>
+      <string name="string_1">hola munda!</string>
+      <string name="string_2">adios moono!</string>
+  </resources>
+`
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'UPDATE_STRING':
+      console.log('ho')
       return { ...state, [action.language]: { ...state[action.language], [action.identifier]: action.string }}
     case 'UPDATE_FILE':
+      console.log('hi')
       return { ...state, [action.language]: action.text }
     default:
       throw new Error();
   }
 }
 
-const initialState = {
-  language_1: { hello: 'hello, world' },
-  language_2: { hello: 'hola, mundo' }
-}
-
 function App() {
-  const [localizations, dispatch] = useReducer(reducer, { language_1: { hello: 'hello, world' }, language_2: { hello: 'hola, mundo' } });
+  const INITIAL_STATE = { language_1: xmlToKeyValue(language_1),
+                          language_2: xmlToKeyValue(language_2) }
+
+  const [localizations, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [language, setLanguage] = useState('language_1')
-  const [localizationString, setLocalizationString] = useState('views.test_strings.hello')
-  const [localizationFile, setLocalizationFileValue] = useState(xml_test)
-  const [localizedString, setLocalizedString] = useState()
-
-  useEffect(() => {
-    let xmlDoc
-
-    try {
-      let parser = new DOMParser();
-      xmlDoc = parser.parseFromString(localizationFile,"text/xml");
-    }
-    catch {
-      console.log('nope')
-    }
-
-    let x = xmlDoc.documentElement;
-    let strings = Object.values(x.childNodes).filter(y => y.nodeName === 'string').map(y => [y.getAttribute('name'), y.childNodes[0].nodeValue])
-
-    for(let i = 0; i < strings.length; i++) {
-      dispatch({ type: "UPDATE_STRING", language: language, identifier: strings[i][0], string: strings[i][1] })
-    }
-
-    // const localized = _.get(loadedFile, localizationString)
-
-    // if ((typeof localized) === "string") {
-    //   setLocalizedString(localized)
-    // }
-    // else {
-    //   setLocalizedString(undefined)
-    // }
-
-  }, [language, localizationFile])
+  const [localizationString, setLocalizationString] = useState('company_name')
 
   return (
     <Container>
-      <p>{ JSON.stringify(localizations) }</p>
       <Localizations>
         <ServerLocalizationTextField localizationString={ localizationString }
                                      setLocalizationString={ setLocalizationString }/>
-        <ServerLocalizations localizationFile={ localizationFile }
-                             setLocalizationFileValue={ setLocalizationFileValue }/>
+        <ServerLocalizations languages={ [language_1, language_2 ] }
+                             updateFile={ (language, text) => dispatch({ type: 'UPDATE_FILE',
+                                                                       language,
+                                                                       text: xmlToKeyValue(text) }) }/>
       </Localizations>
       <Preview>
         <div>
@@ -124,7 +81,9 @@ function App() {
             <option value="language_2">Language 2</option>
           </select>
         </div>
-        <BrowserView localizations={ localizations } language={ language }/>
+        <BrowserView localizations={ localizations }
+                     localizationString={ localizationString }
+                     language={ language }/>
       </Preview>
     </Container>
   );

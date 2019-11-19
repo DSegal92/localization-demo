@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import Highlight from 'react-highlight.js'
 import CodeMirror from 'react-codemirror'
 import styled from 'styled-components'
+import FakeButPlausibleAndroidLayout from './FakeButPlausibleAndroidLayout'
 
 import 'codemirror/mode/haml/haml'
 
 const Container = styled.div`
   position: relative;
   width: 50vw;
-  height: 332px;
+  height: 700px;
   background-color: #232323;
+  overflow: scroll;
 `
 
 const TextArea = styled.input`
@@ -22,6 +23,7 @@ const TextArea = styled.input`
   font-family:  source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
   color: rgb(165, 194, 97);
   font-size: 1em;
+  position: relative;
 `
 
 const NonEditable = styled.span`
@@ -36,12 +38,27 @@ const NonEditable = styled.span`
 `
 
 const Editable = styled.div`
-  position: absolute;
-  top: 64px;
-  left: 60px;
+  background-color: red;
+
+  ::after {
+    position: absolute;
+    z-index: 9;
+    right: -20px;
+    content: '←';
+    color: white;
+  }
 `
 
-export default ({ localizationString, setLocalizationString }) => {
+const AndroidPrefix = styled(NonEditable)`color: #6d9cbe;`
+const EqualSign = styled(NonEditable)`color: #e8bf6a;`
+
+const String1 = styled.div`
+  top: 502px;
+  left: 122px;
+  position: absolute;
+`
+
+const TextField = ({ localizationString, setLocalizationString }) => {
   const CHARACTER_WIDTH = 10
 
   const [code, setCode] = useState('')
@@ -56,23 +73,20 @@ export default ({ localizationString, setLocalizationString }) => {
     setLocalizationString(string)
   }
 
-  const test = `
-  .row
-    %h1
-  `
-
   return (
     <Container>
-      <Highlight>
-        { test }
-      </Highlight>
-      <Editable>
-        <NonEditable>= t('</NonEditable>
-        <TextArea value={ localizationString }
-                  width={ stringWidth }
-                  onChange={ (e) => updateString(e.target.value)  }/>
-        <NonEditable>')</NonEditable>
-      </Editable>
+      <FakeButPlausibleAndroidLayout />
+      <String1>
+        <Editable>
+          <AndroidPrefix>android:text</AndroidPrefix>
+          <EqualSign>=</EqualSign>
+          <TextArea value={ localizationString }
+                    width={ stringWidth }
+                    onChange={ (e) => updateString(e.target.value)  }/>
+        </Editable>
+      </String1>
     </Container>
   )
 }
+
+export default React.memo(TextField)
