@@ -10,7 +10,7 @@ const AndroidishLayout = () => {
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/imageViewTipoProduto"
+            android:id="@+id/imageViewLocalizeHQLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -19,7 +19,22 @@ const AndroidishLayout = () => {
             app:srcCompat="@drawable/localize-logo" />
 
         <TextView
-            android:id="@+id/textViewTipoProduto"
+            android:id="@+id/localizeHQCompanyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="22dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0.04"
+
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/messageHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="22dp"
@@ -29,12 +44,27 @@ const AndroidishLayout = () => {
             android:fontFamily="sans-serif-light"
             android:letterSpacing="0.04"
 
-            android:textColor="#ffffff"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/messageBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="22dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-light"
+            android:letterSpacing="0.04"
+
+            android:textColor="#000000"
             android:textSize="14sp"
             android:textStyle="normal" />
 
         <TextView
-            android:id="@+id/textViewTipoProduto"
+            android:id="@+id/callToAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="22dp"
@@ -43,7 +73,7 @@ const AndroidishLayout = () => {
             android:layout_marginTop="4dp"
             android:fontFamily="sans-serif-light"
             android:letterSpacing="0.04"
-            android:text="@string/kit_de_produtos"
+
             android:textColor="#ffffff"
             android:textSize="14sp"
             android:textStyle="normal" />

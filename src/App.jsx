@@ -1,9 +1,9 @@
-import React, { useState, useReducer } from 'react';
-import ServerLocalizationTextField from './components/ServerLocalizationTextField'
-import ServerLocalizations from './components/ServerLocalizations'
+import React, { useState, useReducer, useEffect } from 'react';
+import FakeCodeFile from './components/FakeCodeFile'
+import LocalizationFiles from './components/LocalizationFiles'
 import styled from 'styled-components'
 import 'codemirror/lib/codemirror.css'
-import BrowserView from './components/BrowserView'
+import DeviceView from './components/DeviceView'
 import { xmlToKeyValue } from './utilities'
 
 const Container = styled.div`
@@ -31,48 +31,69 @@ const Preview = styled.div`
 
 const language_1 = `
   <resources>
-      <string name="string_1">hello, world!</string>
-      <string name="string_2">goodnight, moon!</string>
-  </resources>
-`
-
-const language_2 = `
-  <resources>
-      <string name="string_1">hola munda!</string>
-      <string name="string_2">adios moono!</string>
+      <string name="company_name">LocalizeHQ</string>
+      <string name="heeder">Home Sweet Home for Localization Professionals</string>
+      <string name="body">If you are in the localization industry, LocalizeHQ
+                          is the number one place on the web for you. From
+                          blog posts, to forums, to discounts on localization
+                          software, LocalizeHQ is a one-stop shop for all
+                          your localization needs. Join us today and start
+                          contributing to the best community in the industry!
+      </string>
+      <string name="cta">Join Today!</string>
   </resources>
 `
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'UPDATE_STRING':
+    case 'UPDATE_STRINGS':
       console.log('ho')
-      return { ...state, [action.language]: { ...state[action.language], [action.identifier]: action.string }}
+      return { ...state, [action.language]: { ...state[action.language], strings: action.strings }}
     case 'UPDATE_FILE':
-      console.log('hi')
-      return { ...state, [action.language]: action.text }
+      console.log(action)
+      return { ...state, [action.language]: { ...state[action.language], file: action.text } }
+    case 'UPDATE_LOCALIZATION_STRING':
+      console.log(action)
+      return { ...state, localizationStrings: { ...state['localizationStrings'], [action.localizationString]: action.value } }
     default:
       throw new Error();
   }
 }
 
 function App() {
-  const INITIAL_STATE = { language_1: xmlToKeyValue(language_1),
-                          language_2: xmlToKeyValue(language_2) }
+  const INITIAL_STATE = { language_1: { file: language_1, strings: xmlToKeyValue(language_1) },
+                          language_2: { file: '', strings: {} },
+                          localizationStrings: {
+                            company_name: 'company_name',
+                            header: 'header',
+                            body: 'body',
+                            cta: 'call_to_action'
+                          }}
 
   const [localizations, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [language, setLanguage] = useState('language_1')
-  const [localizationString, setLocalizationString] = useState('company_name')
+
+  const updateLocalizationsOnFileChange = (language, text) => {
+    dispatch({ type: 'UPDATE_FILE', language, text })
+    dispatch({ type: 'UPDATE_STRINGS', language, strings: xmlToKeyValue(text) })
+  }
+
+  useEffect(() => {
+    console.log(localizations)
+  })
 
   return (
     <Container>
       <Localizations>
-        <ServerLocalizationTextField localizationString={ localizationString }
-                                     setLocalizationString={ setLocalizationString }/>
-        <ServerLocalizations languages={ [language_1, language_2 ] }
-                             updateFile={ (language, text) => dispatch({ type: 'UPDATE_FILE',
-                                                                       language,
-                                                                       text: xmlToKeyValue(text) }) }/>
+        <FakeCodeFile localizationStrings={ localizations['localizationStrings'] }
+                      updateLocalizationString={
+                        (localizationString, value) => dispatch({ type: 'UPDATE_LOCALIZATION_STRING',
+                                                                  localizationString,
+                                                                  value })
+                      }
+        />
+        <LocalizationFiles languages={ [localizations['language_1']['file'], localizations['language_2']['file'] ] }
+                           updateFile={ (language, text) => updateLocalizationsOnFileChange(language, text) }/>
       </Localizations>
       <Preview>
         <div>
@@ -81,9 +102,8 @@ function App() {
             <option value="language_2">Language 2</option>
           </select>
         </div>
-        <BrowserView localizations={ localizations }
-                     localizationString={ localizationString }
-                     language={ language }/>
+        <DeviceView localizations={ localizations[language]['strings'] }
+                    localizationStrings={ localizations['localizationStrings'] }/>
       </Preview>
     </Container>
   );
